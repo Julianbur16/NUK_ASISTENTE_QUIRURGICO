@@ -1,0 +1,40 @@
+clear;
+close all;
+clc;
+
+port=80;
+ip='192.168.1.10';
+s=tcpip(ip,port,'NetworkRole','client');
+s.Timeout=0.1;
+
+pinza1=0;
+pinza2=55;
+pinza3=55;
+angulo=45;%se le cambia el signo
+CODO=-1;
+npuntos=5;%Numero de puntos para la interpolarcion cubica
+
+
+punto1=[0,250,50];
+punto2=[200,250,50];
+punto3=[0,250,150];
+Rpuntos=[punto1',punto2',punto3',punto1'];
+n=length(Rpuntos);
+
+if(CODO==-1)
+    CODO=0;
+end
+
+punto1A=[punto1,pinza1,angulo,CODO];
+punto2A=[punto2,pinza2,angulo,CODO];
+punto3A=[punto3,pinza3,angulo,CODO];
+
+
+Rpuntos_enviar=[n,npuntos,punto1A,punto2A,punto3A,punto1A];
+
+for i=1:2
+    fopen(s);
+    fwrite(s,Rpuntos_enviar(1,:)); %LED OFF
+    fclose(s);
+    pause(0.3);
+end
